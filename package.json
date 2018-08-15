@@ -7,7 +7,7 @@
   "name": "@singleware/routing",
   "description": "Singleware generic routing class package.",
   "license": "MIT",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "main": "release/source/index.js",
   "types": "release/types/index.d.ts",
   "keywords": [
@@ -24,12 +24,12 @@
     "node": ">=8"
   },
   "dependencies": {
-    "@singleware/class": "^1.0.12",
-    "@singleware/observable": "^1.0.10",
-    "@singleware/pipeline": "^1.0.9"
+    "@singleware/class": "^1.0.13",
+    "@singleware/observable": "^1.0.11",
+    "@singleware/pipeline": "^1.0.10"
   },
   "devDependencies": {
-    "prettier": "^1.14.0",
+    "prettier": "^1.14.2",
     "typescript": "^2.9.2"
   },
   "prettier": {
@@ -39,7 +39,8 @@
     "semi": true
   },
   "scripts": {
-    "build": "tsc",
+    "build": "npm run make && npm run update",
+    "make": "tsc",
     "update": "cp -Rf ./source/*.d.ts ./release/types"
   }
 }
