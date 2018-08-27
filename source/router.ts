@@ -23,17 +23,20 @@ export class Router<T> {
   /**
    * Router entries.
    */
-  @Class.Private() private entries: Directory<T> = {};
+  @Class.Private()
+  private entries: Directory<T> = {};
 
   /**
    * Entries counter.
    */
-  @Class.Private() private counter: number = 0;
+  @Class.Private()
+  private counter: number = 0;
 
   /**
    * Router settings.
    */
-  @Class.Private() private settings: Settings;
+  @Class.Private()
+  private settings: Settings;
 
   /**
    * Splits the specified path into an array of directories.

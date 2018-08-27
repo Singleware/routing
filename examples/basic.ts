@@ -56,20 +56,20 @@ router.add(
   },
   {
     path: '/action/{id}/edit',
-    environment: { name: 'C', home: 'false' },
     constraint: {
       id: /[0-9a-z]+/
     },
+    environment: { name: 'C', home: 'false' },
     onMatch: (match: Routing.Match<number>) => {
       print(match);
     }
   },
   {
     path: '/action/{id}/edit',
-    environment: { name: 'D', home: 'false' },
     constraint: {
       id: /[0-9]+/
     },
+    environment: { name: 'D', home: 'false' },
     onMatch: (match: Routing.Match<number>) => {
       print(match);
     }
