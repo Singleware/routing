@@ -2,11 +2,9 @@
  * Copyright (C) 2018 Silas B. Domingos
  * This source code is licensed under the MIT License as described in the file LICENSE.
  */
-import * as Observable from '@singleware/observable';
-
+import { Callable } from './types';
 import { Constraint } from './constraint';
 import { Variables } from './variables';
-import { Match } from './match';
 
 /**
  * Route interface.
@@ -31,5 +29,5 @@ export interface Route<T> {
   /**
    * Match event.
    */
-  onMatch: Observable.Observer<Match<T>>;
+  onMatch: Callable;
 }

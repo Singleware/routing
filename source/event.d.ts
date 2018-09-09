@@ -2,18 +2,19 @@
  * Copyright (C) 2018 Silas B. Domingos
  * This source code is licensed under the MIT License as described in the file LICENSE.
  */
+import { Callable } from './types';
 import { Variables } from './variables';
 
 /**
- * Entry environments interface.
+ * Route event interface.
  */
-export interface Environments {
+export interface Event {
   /**
-   * Default match variables.
+   * Environment variables.
    */
-  default: Variables;
+  environment?: Variables;
   /**
-   * Exact match variables.
+   * Event callback.
    */
-  exact: Variables;
+  callback: Callable;
 }

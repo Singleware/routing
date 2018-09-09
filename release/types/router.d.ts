@@ -31,15 +31,16 @@ export declare class Router<T> {
      */
     private createEntry;
     /**
-     * Insert all required entries for the specified array of directories.
+     * Inserts all required entries for the specified array of directories.
      * @param directories Array of directories.
      * @param constraint Path constraint.
      * @returns Returns the last inserted entry.
+     * @throws Throws an error when the rules for the specified variables was not found.
      */
     private insertEntries;
     /**
      * Search all entries that corresponds to the expected directory.
-     * @param expected Expected directory.
+     * @param directory Expected directory.
      * @param entries Entries to select.
      * @returns Returns the selection results.
      */
@@ -69,7 +70,7 @@ export declare class Router<T> {
     /**
      * Match all routes that corresponds to the specified path.
      * @param path Route path.
-     * @param detail Extra details data for notifications.
+     * @param detail Extra details used in the route notification.
      * @returns Returns the manager for the matched routes.
      */
     match(path: string, detail: T): Match<T>;

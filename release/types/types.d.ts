@@ -2,11 +2,9 @@
  * Copyright (C) 2018 Silas B. Domingos
  * This source code is licensed under the MIT License as described in the file LICENSE.
  */
-import { Entry } from './entry';
+import * as Class from '@singleware/class';
 
 /**
- * Directory of entries, interface.
+ * Type declaration for callable members.
  */
-export interface Directory<T> {
-  [directory: string]: Entry<T>;
-}
+export type Callable<T = any> = Class.Callable<T>;

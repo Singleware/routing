@@ -4,7 +4,7 @@
  */
 
 /**
- * Route constraint map interface.
+ * Constraint map interface.
  */
 export interface Constraint {
   [name: string]: RegExp;

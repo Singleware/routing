@@ -7,7 +7,7 @@
   "name": "@singleware/routing",
   "description": "Singleware generic routing class package.",
   "license": "MIT",
-  "version": "1.0.21",
+  "version": "1.0.23",
   "main": "release/source/index.js",
   "types": "release/types/index.d.ts",
   "keywords": [
@@ -25,7 +25,6 @@
   },
   "dependencies": {
     "@singleware/class": "^1.1.9",
-    "@singleware/observable": "^1.0.19",
     "@singleware/pipeline": "^1.0.16"
   },
   "devDependencies": {

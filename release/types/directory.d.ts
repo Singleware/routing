@@ -5,7 +5,7 @@
 import { Entry } from './entry';
 
 /**
- * Entry directory map interface.
+ * Directory of entries, interface.
  */
 export interface Directory<T> {
   [directory: string]: Entry<T>;

@@ -3,7 +3,6 @@
  * This source code is licensed under the MIT License as described in the file LICENSE.
  */
 import * as Class from '@singleware/class';
-import * as Observable from '@singleware/observable';
 import * as Pipeline from '@singleware/pipeline';
 
 import { Constraint } from './constraint';
@@ -46,23 +45,16 @@ export class Router<T> {
   @Class.Private()
   private splitPath(path: string): string[] {
     const pieces = path.split(this.settings.separator);
-    const directories = [];
-
-    for (const directory of pieces) {
+    const directories = [this.settings.separator];
+    for (let i = 0; i < pieces.length; ++i) {
+      const directory = pieces[i];
       if (directory.length) {
-        let match;
-        if ((match = directory.match(this.settings.variable)) && match[0].length === directory.length) {
-          directories.push(match[1] || match[0]);
-        } else {
-          directories.push(`${this.settings.separator}${directory}`);
+        directories.push(directory);
+        if (i + 1 < pieces.length) {
+          directories.push(this.settings.separator);
         }
       }
     }
-
-    if (!directories.length) {
-      directories.push(this.settings.separator);
-    }
-
     return directories;
   }
 
@@ -78,68 +70,60 @@ export class Router<T> {
       pattern: pattern,
       variable: variable,
       entries: {},
-      environments: { exact: {}, default: {} },
-      onExactMatch: new Observable.Subject<Match<T>>(),
-      onMatch: new Observable.Subject<Match<T>>()
+      partial: [],
+      exact: []
     };
   }
 
   /**
-   * Insert all required entries for the specified array of directories.
+   * Inserts all required entries for the specified array of directories.
    * @param directories Array of directories.
    * @param constraint Path constraint.
    * @returns Returns the last inserted entry.
+   * @throws Throws an error when the rules for the specified variables was not found.
    */
   @Class.Private()
   private insertEntries(directories: string[], constraint: Constraint): Entry<T> {
     let entries = this.entries;
     let entry;
-
     for (let directory of directories) {
-      let variable, pattern;
-
-      if (directory.indexOf(this.settings.separator) === -1) {
-        if (!(pattern = constraint[(variable = directory)])) {
-          throw new Error(`Constraint rules for the variable "${variable}" was not found.`);
+      let match, variable, pattern;
+      if ((match = this.settings.variable.exec(directory))) {
+        if (!(pattern = constraint[(variable = match[1])])) {
+          throw new TypeError(`Constraint rules for the variable "${variable}" was not found.`);
         }
         directory = pattern.toString();
       }
-
       if (!(entry = entries[directory])) {
         entries[directory] = entry = this.createEntry(pattern, variable);
         ++this.counter;
       }
-
       entries = entry.entries;
     }
-
     return <Entry<T>>entry;
   }
 
   /**
    * Search all entries that corresponds to the expected directory.
-   * @param expected Expected directory.
+   * @param directory Expected directory.
    * @param entries Entries to select.
    * @returns Returns the selection results.
    */
   @Class.Private()
-  private searchEntries(expected: string, entries: Directory<T>): Selection<T> {
+  private searchEntries(directory: string, entries: Directory<T>): Selection<T> {
     const selection = <Selection<T>>{ directories: [], entries: [], variables: {} };
-    const value = expected.substr(this.settings.separator.length);
-
-    for (const directory in entries) {
-      const entry = entries[directory];
+    for (const current in entries) {
+      const entry = entries[current];
       if (entry.pattern && entry.variable) {
         let match;
-        if ((match = value.match(entry.pattern)) && match[0].length === value.length) {
-          selection.variables[entry.variable] = value;
+        if ((match = entry.pattern.exec(directory))) {
+          selection.variables[entry.variable] = directory;
           selection.entries.push(entry);
         }
-      } else if (directory === expected) {
+      } else if (current === directory) {
         selection.entries.push(entry);
       }
     }
-
     return selection;
   }
 
@@ -153,31 +137,29 @@ export class Router<T> {
   private collectEntries(directories: string[]): Selection<T> {
     let selection = <Selection<T>>{ directories: [], entries: [], variables: {} };
     let targets = [this.entries];
-
     while (directories.length && targets.length) {
-      const directory = directories[0];
+      let tempVariables = {};
       const tempTargets = [];
-      const tempEntries = <Entry<T>[]>[];
-      let tempVariables = <Variables>{};
-
+      const tempEntries = [];
       for (const entries of targets) {
-        const tempSelection = this.searchEntries(directory, entries);
+        const tempSelection = this.searchEntries(directories[0], entries);
         tempVariables = { ...tempSelection.variables, ...tempVariables };
         for (const entry of tempSelection.entries) {
-          tempEntries.push(entry);
+          if (entry.partial.length || entry.exact.length) {
+            tempEntries.push(entry);
+          }
           tempTargets.push(entry.entries);
         }
       }
-
       targets = tempTargets;
-
+      if (tempTargets.length) {
+        selection.directories.push(<string>directories.shift());
+      }
       if (tempEntries.length) {
         selection.entries = tempEntries;
         selection.variables = { ...tempVariables, ...selection.variables };
-        selection.directories.push(<string>directories.shift());
       }
     }
-
     return selection;
   }
 
@@ -205,14 +187,12 @@ export class Router<T> {
   @Class.Public()
   public add(...routes: Route<T>[]): Router<T> {
     for (const route of routes) {
-      const directories = this.splitPath(route.path);
-      const entry = this.insertEntries(directories, route.constraint || {});
+      const entry = this.insertEntries(this.splitPath(route.path), route.constraint || {});
+      const event = { environment: route.environment, callback: route.onMatch };
       if (route.exact) {
-        entry.onExactMatch.subscribe(route.onMatch);
-        entry.environments.exact = { ...route.environment, ...entry.environments.exact };
+        entry.exact.push(event);
       } else {
-        entry.onMatch.subscribe(route.onMatch);
-        entry.environments.default = { ...route.environment, ...entry.environments.default };
+        entry.partial.push(event);
       }
     }
     return this;
@@ -221,38 +201,30 @@ export class Router<T> {
   /**
    * Match all routes that corresponds to the specified path.
    * @param path Route path.
-   * @param detail Extra details data for notifications.
+   * @param detail Extra details used in the route notification.
    * @returns Returns the manager for the matched routes.
    */
   @Class.Public()
   public match(path: string, detail: T): Match<T> {
     const directories = this.splitPath(path);
     const selection = this.collectEntries(directories);
-
-    if (!selection.entries.length) {
-      selection.directories.push(this.settings.separator);
-      if (this.entries[this.settings.separator]) {
-        selection.entries.push(this.entries[this.settings.separator]);
-      }
-    }
-
-    const events = new Pipeline.Subject<Match<T>>();
+    const pipeline = new Pipeline.Subject<Match<T>>();
     const variables = <Variables[]>[];
     const remaining = directories.join('');
-    const analysed = selection.directories.join('');
-
+    const collected = selection.directories.join('');
     for (const entry of selection.entries) {
-      if (entry.onExactMatch.length && remaining.length === 0) {
-        events.subscribe(entry.onExactMatch);
-        variables.push({ ...selection.variables, ...entry.environments.exact });
+      if (remaining.length === 0) {
+        for (const event of entry.exact) {
+          pipeline.subscribe(event.callback);
+          variables.push({ ...selection.variables, ...event.environment });
+        }
       }
-      if (entry.onMatch.length) {
-        events.subscribe(entry.onMatch);
-        variables.push({ ...selection.variables, ...entry.environments.default });
+      for (const event of entry.partial) {
+        pipeline.subscribe(event.callback);
+        variables.push({ ...selection.variables, ...event.environment });
       }
     }
-
-    return new Match(analysed, remaining, variables, detail, events);
+    return new Match(collected, remaining, variables, detail, pipeline);
   }
 
   /**

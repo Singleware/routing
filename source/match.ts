@@ -15,32 +15,38 @@ export class Match<T> {
   /**
    * Matched path.
    */
-  @Class.Private() private matchPath: string;
+  @Class.Private()
+  private matchPath: string;
 
   /**
    * Pipeline of matched events.
    */
-  @Class.Private() private matchEvents: Pipeline.Subject<Match<T>>;
+  @Class.Private()
+  private matchEvents: Pipeline.Subject<Match<T>>;
 
   /**
    * List of matched variables.
    */
-  @Class.Private() private matchVariables: Variables[];
+  @Class.Private()
+  private matchVariables: Variables[];
 
   /**
    * Current variables.
    */
-  @Class.Private() private currentVariables?: Variables;
+  @Class.Private()
+  private currentVariables?: Variables;
 
   /**
    * Remaining path.
    */
-  @Class.Private() private remainingPath: string;
+  @Class.Private()
+  private remainingPath: string;
 
   /**
    * Extra details data.
    */
-  @Class.Private() private extraDetails: T;
+  @Class.Private()
+  private extraDetails: T;
 
   /**
    * Current match length.
