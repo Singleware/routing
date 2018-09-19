@@ -137,29 +137,35 @@ export class Router<T> {
   private collectEntries(directories: string[]): Selection<T> {
     let selection = <Selection<T>>{ directories: [], entries: [], variables: {} };
     let targets = [this.entries];
+    let variables = {};
+
     while (directories.length && targets.length) {
-      let tempVariables = {};
       const tempTargets = [];
       const tempEntries = [];
+
       for (const entries of targets) {
-        const tempSelection = this.searchEntries(directories[0], entries);
-        tempVariables = { ...tempSelection.variables, ...tempVariables };
-        for (const entry of tempSelection.entries) {
+        const tempSearch = this.searchEntries(directories[0], entries);
+        variables = { ...tempSearch.variables, ...variables };
+        for (const entry of tempSearch.entries) {
           if (entry.partial.length || entry.exact.length) {
             tempEntries.push(entry);
           }
           tempTargets.push(entry.entries);
         }
       }
+
       targets = tempTargets;
+
       if (tempTargets.length) {
         selection.directories.push(<string>directories.shift());
       }
+
       if (tempEntries.length) {
         selection.entries = tempEntries;
-        selection.variables = { ...tempVariables, ...selection.variables };
+        selection.variables = variables;
       }
     }
+
     return selection;
   }
 
