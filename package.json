@@ -7,28 +7,28 @@
   "name": "@singleware/routing",
   "description": "Singleware generic routing class package.",
   "license": "MIT",
-  "version": "1.0.24",
+  "version": "1.0.26",
   "main": "release/source/index.js",
   "types": "release/types/index.d.ts",
   "keywords": [
     "router",
     "routing",
-    "routes",
-    "async"
+    "async routes",
+    "async router"
   ],
   "repository": {
     "type": "git",
     "url": "https://github.com/singleware/routing"
   },
   "engines": {
-    "node": ">=8"
+    "node": ">=10"
   },
   "dependencies": {
-    "@singleware/class": "^1.1.9",
-    "@singleware/pipeline": "^1.0.16"
+    "@singleware/class": "^1.1.14",
+    "@singleware/pipeline": "^1.0.18"
   },
   "devDependencies": {
-    "prettier": "^1.14.2",
+    "prettier": "^1.15.3",
     "typescript": "^2.9.2"
   },
   "prettier": {

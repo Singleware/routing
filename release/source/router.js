@@ -16,12 +16,13 @@ const match_1 = require("./match");
 /**
  * Generic router class.
  */
-let Router = class Router {
+let Router = class Router extends Class.Null {
     /**
      * Default constructor.
      * @param settings Router settings.
      */
     constructor(settings) {
+        super();
         /**
          * Router entries.
          */

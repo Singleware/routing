@@ -11,7 +11,7 @@ import { Variables } from './variables';
  * Generic match manager class.
  */
 @Class.Describe()
-export class Match<T> {
+export class Match<T> extends Class.Null {
   /**
    * Matched path.
    */
@@ -105,6 +105,7 @@ export class Match<T> {
    * @param events Pipeline of matched events.
    */
   constructor(path: string, remaining: string, variables: Variables[], detail: T, events: Pipeline.Subject<Match<T>>) {
+    super();
     this.matchPath = path;
     this.matchEvents = events;
     this.matchVariables = variables;

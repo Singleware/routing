@@ -1,10 +1,15 @@
+/**
+ * Copyright (C) 2018 Silas B. Domingos
+ * This source code is licensed under the MIT License as described in the file LICENSE.
+ */
+import * as Class from '@singleware/class';
 import { Settings } from './settings';
 import { Route } from './route';
 import { Match } from './match';
 /**
  * Generic router class.
  */
-export declare class Router<T> {
+export declare class Router<T> extends Class.Null {
     /**
      * Router entries.
      */

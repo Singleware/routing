@@ -18,7 +18,7 @@ import { Match } from './match';
  * Generic router class.
  */
 @Class.Describe()
-export class Router<T> {
+export class Router<T> extends Class.Null {
   /**
    * Router entries.
    */
@@ -174,6 +174,7 @@ export class Router<T> {
    * @param settings Router settings.
    */
   constructor(settings: Settings) {
+    super();
     this.settings = settings;
   }
 

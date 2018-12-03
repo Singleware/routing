@@ -14,7 +14,7 @@ const Class = require("@singleware/class");
 /**
  * Generic match manager class.
  */
-let Match = class Match {
+let Match = class Match extends Class.Null {
     /**
      * Default constructor.
      * @param path Matched path.
@@ -24,6 +24,7 @@ let Match = class Match {
      * @param events Pipeline of matched events.
      */
     constructor(path, remaining, variables, detail, events) {
+        super();
         this.matchPath = path;
         this.matchEvents = events;
         this.matchVariables = variables;
