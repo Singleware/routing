@@ -1,11 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * Copyright (C) 2018 Silas B. Domingos
+/*
+ * Copyright (C) 2018-2019 Silas B. Domingos
  * This source code is licensed under the MIT License as described in the file LICENSE.
- *
- * The proposal of this example is to show how to use the routing package for generic
- * purposes.
  */
 const Routing = require("../source");
 /**
@@ -23,7 +20,7 @@ const router = new Routing.Router({
 function request(path, detail) {
     const routes = router.match(path, detail);
     while (routes.length) {
-        routes.next();
+        routes.nextSync();
     }
 }
 /**
