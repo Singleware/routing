@@ -38,8 +38,10 @@
     "semi": true
   },
   "scripts": {
-    "build": "npm run make && npm run update",
-    "make": "tsc",
-    "update": "cp -Rf ./source/*.d.ts ./release/types"
+    "start": "node ./release/examples/basic.js",
+    "build": "npm run make-source && npm run make-examples ",
+    "make-source": "npx tsc -p ./source && npm run update-source",
+    "make-examples": "npx tsc -p ./examples",
+    "update-source": "cp -Rf ./source/*.d.ts ./release/types"
   }
 }
