@@ -6,8 +6,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * Copyright (C) 2018 Silas B. Domingos
+/*
+ * Copyright (C) 2018-2019 Silas B. Domingos
  * This source code is licensed under the MIT License as described in the file LICENSE.
  */
 const Class = require("@singleware/class");
@@ -28,7 +28,7 @@ let Match = class Match extends Class.Null {
         this.matchPath = path;
         this.matchEvents = events;
         this.matchVariables = variables;
-        this.currentVariables = variables.find(() => true);
+        this.currentVariables = variables.shift();
         this.remainingPath = remaining;
         this.extraDetails = detail;
     }
@@ -73,8 +73,8 @@ let Match = class Match extends Class.Null {
      * @returns Returns the own instance.
      */
     nextSync() {
-        this.currentVariables = this.matchVariables.shift();
         this.matchEvents.notifyFirstSync(this);
+        this.currentVariables = this.matchVariables.shift();
         return this;
     }
     /**
@@ -82,8 +82,8 @@ let Match = class Match extends Class.Null {
      * @returns Returns a promise to get the own instance.
      */
     async next() {
-        this.currentVariables = this.matchVariables.shift();
         await this.matchEvents.notifyFirst(this);
+        this.currentVariables = this.matchVariables.shift();
         return this;
     }
 };

@@ -1,5 +1,5 @@
-/**
- * Copyright (C) 2018 Silas B. Domingos
+/*
+ * Copyright (C) 2018-2019 Silas B. Domingos
  * This source code is licensed under the MIT License as described in the file LICENSE.
  */
 import * as Class from '@singleware/class';
@@ -109,7 +109,7 @@ export class Match<T> extends Class.Null {
     this.matchPath = path;
     this.matchEvents = events;
     this.matchVariables = variables;
-    this.currentVariables = variables.find(() => true);
+    this.currentVariables = variables.shift();
     this.remainingPath = remaining;
     this.extraDetails = detail;
   }
@@ -120,8 +120,8 @@ export class Match<T> extends Class.Null {
    */
   @Class.Public()
   public nextSync(): Match<T> {
-    this.currentVariables = this.matchVariables.shift();
     this.matchEvents.notifyFirstSync(this);
+    this.currentVariables = this.matchVariables.shift();
     return this;
   }
 
@@ -131,8 +131,8 @@ export class Match<T> extends Class.Null {
    */
   @Class.Public()
   public async next(): Promise<Match<T>> {
-    this.currentVariables = this.matchVariables.shift();
     await this.matchEvents.notifyFirst(this);
+    this.currentVariables = this.matchVariables.shift();
     return this;
   }
 }
